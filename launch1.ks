@@ -1,28 +1,48 @@
+set desiredApoapsis to 100000.
+set circNode to 0.
+set margin to 0.01. //1 = 100%, 0.01 = 1%
+set atmoHeight to 70000.
+
 clearscreen.
 wait until ship:unpacked.
-//from {local countdown is 10.} until countdown = 0 step {set countdown to countdown - 1.} do {
-//	print countdown.
-//	wait 1.
-//}
+
 set throttle to 1.
 set steering to heading(90,90).
 
-//stage.
-//print stage:liquidfuel.
-when stage:liquidfuel = 0 then {
-	stage.
-//	print "Staged.".
-	preserve.
+until ship:apoapsis > desiredApoapsis {
+	lock steering to heading(90,90-(90*(ship:apoapsis/desiredApoapsis))).
+	if stage:liquidfuel = 0 {stage.}
+	wait 0.01.
 }
 
-when ship:apoapsis > 100000 then {
-//	print "Apoapsis".
-	set throttle to 0.
-	unlock steering.
+lock steering to heading(90,0).
+lock throttle to 0.
+wait until ship:altitude > atmoHeight.
+
+set etaApoapsis to ship:orbit:eta:apoapsis.
+set TS_etaApoapsis to TimeSpan(0,0,0,0,etaApoapsis).
+set dv to 0.
+set circNode to node(TS_etaApoapsis,0,0,dv).
+add circNode.
+
+from {local deltaDenom is 1.} until circNode:orbit:periapsis >= (desiredApoapsis + (desiredApoapsis * margin)) and circNode:orbit:periapsis <= (desiredApoapsis - (desiredApoapsis * margin)) step {set deltaDenom to deltaDenom + 1.} do {
+	set etaApoapsis to ship:orbit:eta:apoapsis.
+	set TS_etaApoapsis to TimeSpan(0,0,0,0,etaApoapsis).
+	remove circNode.
+	set circNode to node(TS_etaApoapsis,0,0,dv).
+	add circNode.
+	set nodePeriapsis to circNode:orbit:periapsis.
+	print "Periapsis: " + nodePeriapsis.
+	print nodePeriapsis < desiredApoapsis.
+	if nodePeriapsis < desiredApoapsis {
+		set dv to dv + 1000/deltaDenom. //if possible, make a variable for the 1000
+	} else {
+		set dv to dv - 1000/deltaDenom.
+	}
 }
 
-from {local threshold is 2500. local pitch is 90.} until threshold >= 50000 step {set threshold to threshold + 4750. set pitch to pitch - 10.} do {
-	wait until ship:altitude >= threshold.
-	set steering to heading(90,pitch).
-	print "Pitch: " + pitch.
-}
+print "Node Added".
+
+
+
+shutdown.
