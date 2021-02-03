@@ -25,24 +25,28 @@ set dv to 0.
 set circNode to node(TS_etaApoapsis,0,0,dv).
 add circNode.
 
-from {local deltaDenom is 1.} until circNode:orbit:periapsis >= (desiredApoapsis + (desiredApoapsis * margin)) and circNode:orbit:periapsis <= (desiredApoapsis - (desiredApoapsis * margin)) step {set deltaDenom to deltaDenom + 1.} do {
+from {local deltaDenom is 1.} until circNode:orbit:periapsis <= (desiredApoapsis + (desiredApoapsis * margin)) and circNode:orbit:periapsis >= (desiredApoapsis - (desiredApoapsis * margin)) and circNode:orbit:apoapsis <= (desiredApoapsis + (desiredApoapsis * margin)) and circNode:orbit:apoapsis >= (desiredApoapsis - (desiredApoapsis * margin)) step {set deltaDenom to deltaDenom + 1.} do { //Jesus Christ what a deplorable line of code
 	set etaApoapsis to ship:orbit:eta:apoapsis.
 	set TS_etaApoapsis to TimeSpan(0,0,0,0,etaApoapsis).
 	remove circNode.
 	set circNode to node(TS_etaApoapsis,0,0,dv).
 	add circNode.
-	set nodePeriapsis to circNode:orbit:periapsis.
-	print "Periapsis: " + nodePeriapsis.
-	print nodePeriapsis < desiredApoapsis.
-	if nodePeriapsis < desiredApoapsis {
+	//debugging below
+	//print "Apoapsis:  " + circNode:orbit:apoapsis.
+	//print "Periapsis: " + circNode:orbit:periapsis.
+	//if circNode:orbit:periapsis <= (desiredApoapsis - (desiredApoapsis * margin)) {
+	//	print "Adding dv".
+	//}
+	//if circNode:orbit:apoapsis >= (desiredApoapsis + (desiredApoapsis * margin)) {
+	//	print "Removing dv".
+	//}
+	//wait 5.
+	//debugging above
+	if circNode:orbit:periapsis <= (desiredApoapsis - (desiredApoapsis * margin)){
 		set dv to dv + 1000/deltaDenom. //if possible, make a variable for the 1000
-	} else {
+	} else if circNode:orbit:apoapsis >= (desiredApoapsis + (desiredApoapsis * margin)) {
 		set dv to dv - 1000/deltaDenom.
 	}
 }
-
-print "Node Added".
-
-
 
 shutdown.
