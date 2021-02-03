@@ -38,8 +38,8 @@ from {local deltaDenom is 1.} until circNode:orbit:periapsis <= (desiredApoapsis
 	}
 }
 
-lock steering to circNode:
-
+lock steering to circNode:burnvector.
+wait until circNode:eta 
 
 
 
