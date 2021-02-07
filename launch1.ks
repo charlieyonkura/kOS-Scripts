@@ -35,6 +35,7 @@ function gravityTurn {
 	until vessel:orbit:apoapsis > desiredApoapsis {
 		lock steering to heading(desiredHeading,90-(90*(vessel:orbit:apoapsis/desiredApoapsis))).
 		if stage:liquidfuel = 0 {stage.}
+		if abort {shutdown.}
 		wait 0.01.
 	}
 }
