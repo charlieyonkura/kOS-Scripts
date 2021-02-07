@@ -1,5 +1,5 @@
-set desiredApoapsis to 250000.
-set desiredHeading to 45.
+set desiredApoapsis to 100000.
+set desiredHeading to 90.
 set atmoHeight to 70000.
 set circNode to 0.
 set isp to 0.
