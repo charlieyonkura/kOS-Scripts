@@ -6,8 +6,9 @@ function main {
 	clearscreen.
 	wait until vessel:unpacked.
 	suborbit(vessel,desiredApoapsis,desiredHeading).
+	toggle ag4. //extend solar panels, antennas, etc
 	circularizeOrbit(vessel).
-	shutdown.
+	
 }
 
 function suborbit {
@@ -61,7 +62,7 @@ function circularizeOrbit {
 }
 
 function executeNode {
-	parameter vessel. //redundant, see below
+	parameter vessel. //redundant but would like to implement vessel specific later
 	parameter node.
 	parameter burnTime.
 	
@@ -121,4 +122,5 @@ function getCurrentBody{
 	parameter vessel.
 	return vessel:body.
 }
-print "Call main(vessel, desiredApoapsis, desiredHeading) when ready".
+
+main(ship,100000,90).
